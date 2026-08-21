@@ -3,9 +3,9 @@
   "configurations": [
     {
       "name": "jarrahscout",
-      "runtimeExecutable": "py",
-      "runtimeArgs": ["-3", "-m", "http.server", "5173", "--bind", "127.0.0.1"],
-      "port": 5173
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000
     }
   ]
 }

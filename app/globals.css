@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-paper text-ink font-body antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* One consistent focus ring everywhere, never the browser default. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-gold/70 ring-offset-2 ring-offset-paper;
+  }
+
+  ::selection {
+    @apply bg-gold/25 text-ink;
+  }
+
+  /* Warm scrollbars so the panel does not show a stock grey gutter. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.paper.400') transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-paper-400;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-forest px-5 py-2.5 font-body text-sm font-medium text-paper-50
+           shadow-card transition-all duration-200 hover:bg-forest-600 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-55;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-paper-300 bg-paper-50/70 px-5 py-2.5
+           font-body text-sm font-medium text-ink-soft transition-all duration-200 hover:border-paper-400 hover:text-ink active:scale-[0.98];
+  }
+
+  .field {
+    @apply w-full rounded-xl border border-paper-300 bg-paper-50 px-3.5 py-2.5 font-body text-sm text-ink
+           placeholder:text-ink-faint transition-colors duration-200 hover:border-paper-400
+           focus:border-forest/40 focus:outline-none focus:ring-2 focus:ring-forest/15;
+  }
+
+  .label {
+    @apply mb-1.5 block font-body text-xs font-medium uppercase tracking-[0.13em] text-ink-muted;
+  }
+}
+
+/* ------------------------------------------------------------------ map ---
+   MapLibre ships its own chrome. Everything visible gets restyled here so the
+   map reads as part of the page rather than a third-party widget.            */
+
+.maplibregl-ctrl-group {
+  @apply overflow-hidden rounded-full border border-paper-300 bg-paper-50/90 shadow-card backdrop-blur;
+  background-clip: padding-box;
+}
+
+.maplibregl-ctrl-group button {
+  @apply h-9 w-9 bg-transparent transition-colors duration-150;
+}
+
+.maplibregl-ctrl-group button + button {
+  @apply border-t border-paper-300;
+}
+
+.maplibregl-ctrl-group button:hover {
+  background-color: theme('colors.paper.200');
+}
+
+.maplibregl-ctrl-group button:focus-visible {
+  @apply ring-2 ring-gold/70;
+}
+
+/* Recolour the built-in +/- glyphs to ink. */
+.maplibregl-ctrl-icon {
+  filter: sepia(0.25) saturate(0.5) brightness(0.55);
+}
+
+.maplibregl-ctrl-attrib {
+  @apply rounded-full border border-paper-300 bg-paper-50/80 font-body text-[0.65rem] text-ink-faint backdrop-blur;
+}
+
+.maplibregl-ctrl-attrib a {
+  @apply text-ink-muted no-underline hover:text-forest;
+}
+
+.maplibregl-ctrl-attrib-button {
+  filter: sepia(0.25) saturate(0.4) brightness(0.6);
+}
+
+/* The stock focus outline on the canvas is a blue browser ring. */
+.maplibregl-canvas:focus {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
