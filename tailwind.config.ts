@@ -34,6 +34,7 @@ const config: Config = {
       fontFamily: {
         display: ['var(--font-display)', 'Georgia', 'serif'],
         body: ['var(--font-body)', 'system-ui', 'sans-serif'],
+        arabic: ['var(--font-arabic)', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
         card: '0 2px 8px rgba(0,0,0,0.30), 0 16px 40px -20px rgba(0,0,0,0.65)',

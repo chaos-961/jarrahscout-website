@@ -21,7 +21,7 @@ export default async function AboutPage() {
 
   return (
     <>
-      <main className="min-h-[100dvh] pt-14">
+      <main id="main" tabIndex={-1} className="min-h-[100dvh] pt-14">
         {/* Soft plum bloom behind the opening, so the page does not start flat. */}
         <div className="relative overflow-hidden">
           <div

@@ -94,7 +94,7 @@ export default function SubmitPage() {
 
   return (
     <>
-      <main className="relative min-h-[100dvh] overflow-hidden pt-14">
+      <main id="main" tabIndex={-1} className="relative min-h-[100dvh] overflow-hidden pt-14">
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-96 opacity-60"
           style={{

@@ -31,7 +31,7 @@ export default function Footer() {
             <Logo className="h-11 w-auto" />
             <div>
               <p className="font-display text-base font-semibold text-white">Jarrah Scouts</p>
-              <p className="font-body text-xs text-plum-400" dir="rtl" lang="ar">
+              <p className="font-arabic text-[0.7rem] text-plum-400" dir="rtl" lang="ar">
                 جمعية كشافة الجرّاح في لبنان
               </p>
             </div>
@@ -66,7 +66,8 @@ export default function Footer() {
           <p className="mb-3 font-body text-[0.66rem] uppercase tracking-[0.2em] text-plum-500">
             Motto
           </p>
-          <p className="font-display text-lg text-plum-100" dir="rtl" lang="ar">
+          {/* w-fit, or dir="rtl" throws it to the far side of the column. */}
+          <p className="w-fit font-arabic text-base text-plum-100" dir="rtl" lang="ar">
             كن مستعداً
           </p>
           <p className="mt-1 font-body text-sm text-plum-400">Be Prepared</p>

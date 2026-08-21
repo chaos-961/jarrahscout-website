@@ -84,7 +84,7 @@ export default function TimelinePage() {
 
   return (
     <>
-      <main className="flex h-[100dvh] flex-col overflow-hidden pt-14">
+      <main id="main" tabIndex={-1} className="flex h-[100dvh] flex-col overflow-hidden pt-14">
         <TimelineSlider
           year={year}
           onYearChange={handleYearChange}

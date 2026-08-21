@@ -104,46 +104,57 @@
 
 /* ------------------------------------------------------------------ map ---
    MapLibre ships its own chrome. Everything visible gets restyled so the map
-   reads as part of the page rather than a third-party widget.               */
+   reads as part of the page rather than a third-party widget.
 
-.maplibregl-ctrl-group {
+   Every selector here is doubled up on purpose. maplibre-gl.css is imported by
+   the map components, which are dynamic, so its sheet lands after this one and
+   wins any tie. Its `.maplibregl-ctrl-group{background:#fff}` was beating the
+   plum below, leaving the zoom buttons as white blocks with the retinted (and
+   therefore near white) icons invisible on top. Matching on both classes the
+   control carries settles it without pulling the map's CSS onto every page. */
+
+.maplibregl-ctrl.maplibregl-ctrl-group {
   @apply overflow-hidden rounded-full border border-hairline bg-plum-950/80 shadow-card backdrop-blur;
   background-clip: padding-box;
 }
 
-.maplibregl-ctrl-group button {
+.maplibregl-ctrl.maplibregl-ctrl-group button {
   @apply h-9 w-9 bg-transparent transition-colors duration-150;
 }
 
-.maplibregl-ctrl-group button + button {
+.maplibregl-ctrl.maplibregl-ctrl-group button + button {
   @apply border-t border-hairline;
 }
 
-.maplibregl-ctrl-group button:hover {
+.maplibregl-ctrl.maplibregl-ctrl-group button:hover {
   background-color: theme('colors.plum.800');
 }
 
 /* The stock +/- glyphs are near black. Flip them to read on plum. */
-.maplibregl-ctrl-icon {
+.maplibregl-ctrl-group .maplibregl-ctrl-icon {
   filter: invert(1) brightness(1.6) sepia(0.3) saturate(2) hue-rotate(230deg);
 }
 
 /* Attribution stays a small dot until you ask for it. Required credit is
    still one click away, which is what the licences ask for. */
-.maplibregl-ctrl-attrib {
-  @apply rounded-full border border-hairline bg-plum-950/70 font-body text-[0.62rem] text-plum-400 backdrop-blur;
+/* The compact variant carries its own white background and black text at two
+   classes, so this needs three to land. */
+.maplibregl-ctrl.maplibregl-ctrl-attrib,
+.maplibregl-ctrl.maplibregl-ctrl-attrib.maplibregl-compact {
+  @apply rounded-full border border-hairline bg-plum-950/80 font-body text-[0.62rem] text-plum-400 backdrop-blur;
 }
 
 .maplibregl-ctrl-attrib.maplibregl-compact:not(.maplibregl-compact-show) .maplibregl-ctrl-attrib-inner {
   display: none;
 }
 
-.maplibregl-ctrl-attrib a {
+.maplibregl-ctrl-attrib .maplibregl-ctrl-attrib-inner a {
   @apply text-plum-300 no-underline hover:text-plum-100;
 }
 
-.maplibregl-ctrl-attrib-button {
+.maplibregl-ctrl-attrib .maplibregl-ctrl-attrib-button {
   filter: invert(1) brightness(1.4) sepia(0.3) saturate(2) hue-rotate(230deg);
+  background-color: transparent;
 }
 
 .maplibregl-canvas:focus {

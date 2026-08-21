@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 /**
  * The drifting wall of photographs behind the hero.
@@ -12,6 +12,10 @@ import { useEffect, useMemo, useState } from 'react';
  *
  * The initial set is passed in from the server so the markup matches on hydrate.
  * Only after mount does it start swapping in random photographs.
+ *
+ * Nothing runs while the wall cannot be seen. Scrolled past the hero, or on a
+ * background tab, both the swap timer and the drift stop: otherwise a page left
+ * open re-renders thirty tiles every few seconds behind the footer.
  */
 
 const COLUMN_COUNT = 5;
@@ -46,6 +50,9 @@ function Tile({ url }: { url: string }) {
         alt=""
         loading="lazy"
         decoding="async"
+        /* Decoration. It has no business competing for a connection with the
+           fonts and the emblem. */
+        fetchPriority="low"
         onLoad={() => setLoaded(true)}
         className={`h-full w-full object-cover transition-opacity duration-500 ${
           visible && loaded ? 'opacity-100' : 'opacity-0'
@@ -59,9 +66,30 @@ export default function PhotoWall({ pool }: { pool: string[] }) {
   /* Deterministic first fill, so the server markup and the first client render
      agree. Randomising only starts after mount. */
   const [urls, setUrls] = useState(() => pool.slice(0, COLUMN_COUNT * PER_COLUMN));
+  const [live, setLive] = useState(true);
+  const ref = useRef<HTMLDivElement>(null);
+
+  /* On screen, and on a foreground tab. Scroll covers the first half of that:
+     the wall sits at the top of the page, so it can only leave by scrolling. */
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const check = () => setLive(!document.hidden && el.getBoundingClientRect().bottom > 0);
+    check();
+
+    window.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check);
+    document.addEventListener('visibilitychange', check);
+    return () => {
+      window.removeEventListener('scroll', check);
+      window.removeEventListener('resize', check);
+      document.removeEventListener('visibilitychange', check);
+    };
+  }, []);
 
   useEffect(() => {
-    if (pool.length === 0) return;
+    if (!live || pool.length === 0) return;
     const id = window.setInterval(() => {
       setUrls((prev) => {
         if (prev.length === 0) return prev;
@@ -74,7 +102,7 @@ export default function PhotoWall({ pool }: { pool: string[] }) {
       });
     }, SWAP_MS);
     return () => window.clearInterval(id);
-  }, [pool]);
+  }, [live, pool]);
 
   const columns = useMemo(() => {
     const cols: string[][] = Array.from({ length: COLUMN_COUNT }, () => []);
@@ -83,14 +111,16 @@ export default function PhotoWall({ pool }: { pool: string[] }) {
   }, [urls]);
 
   return (
-    <div className="absolute inset-0 isolate overflow-hidden" aria-hidden="true">
+    <div ref={ref} className="absolute inset-0 isolate overflow-hidden" aria-hidden="true">
       <div className="grid h-full grid-cols-3 gap-2.5 p-2.5 sm:grid-cols-4 lg:grid-cols-5">
         {columns.map((col, i) => (
           <div
             key={i}
             className={`flex flex-col gap-2.5 will-change-transform ${
               i % 2 === 0 ? 'animate-drift-up' : 'animate-drift-down'
-            } ${i === 3 ? 'hidden sm:flex' : ''} ${i === 4 ? 'hidden lg:flex' : ''}`}
+            } ${live ? '' : '[animation-play-state:paused]'} ${
+              i === 3 ? 'hidden sm:flex' : ''
+            } ${i === 4 ? 'hidden lg:flex' : ''}`}
             style={{ animationDuration: `${52 + i * 9}s` }}
           >
             {[...col, ...col].map((url, j) => (

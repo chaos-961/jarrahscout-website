@@ -3,8 +3,15 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { Logo } from './Logo';
+
+/**
+ * The header is in the root layout, so whatever it imports is on the critical
+ * path of every page. A hamburger and a panel that opens are not worth an
+ * animation library for that, so both are plain CSS: transforms on the bars,
+ * and a grid row travelling 0fr to 1fr, which is how you animate to a height
+ * the content decides. The panel stays mounted and goes inert when closed.
+ */
 
 const LINKS = [
   { href: '/', label: 'Home' },
@@ -97,60 +104,55 @@ export default function Navbar() {
           aria-label={open ? 'Close menu' : 'Open menu'}
           className="grid h-10 w-10 place-items-center rounded-full border border-hairline bg-white/[0.04] text-plum-100 transition-colors hover:bg-white/[0.08] md:hidden"
         >
-          <span className="relative block h-3.5 w-4.5" aria-hidden="true">
-            <motion.span
-              animate={open ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
-              transition={{ duration: 0.2 }}
-              className="absolute left-0 top-0 block h-[1.5px] w-4 origin-center bg-current"
+          <span className="relative block h-3.5 w-4" aria-hidden="true">
+            <span
+              className={`absolute left-0 top-0 block h-[1.5px] w-4 origin-center bg-current transition-transform duration-200 ${
+                open ? 'translate-y-[6px] rotate-45' : ''
+              }`}
             />
-            <motion.span
-              animate={open ? { opacity: 0 } : { opacity: 1 }}
-              transition={{ duration: 0.15 }}
-              className="absolute left-0 top-[6px] block h-[1.5px] w-4 bg-current"
+            <span
+              className={`absolute left-0 top-[6px] block h-[1.5px] w-4 bg-current transition-opacity duration-150 ${
+                open ? 'opacity-0' : ''
+              }`}
             />
-            <motion.span
-              animate={open ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
-              transition={{ duration: 0.2 }}
-              className="absolute left-0 top-[12px] block h-[1.5px] w-4 origin-center bg-current"
+            <span
+              className={`absolute left-0 top-[12px] block h-[1.5px] w-4 origin-center bg-current transition-transform duration-200 ${
+                open ? '-translate-y-[6px] -rotate-45' : ''
+              }`}
             />
           </span>
         </button>
       </nav>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            id="mobile-menu"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden border-t border-hairline bg-canvas/95 backdrop-blur-xl md:hidden"
-          >
-            <ul className="px-4 py-3">
-              {LINKS.map((link) => {
-                const active = isActive(link.href);
-                return (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      aria-current={active ? 'page' : undefined}
-                      className={`flex items-center justify-between rounded-xl px-3 py-3 font-body text-[0.95rem] transition-colors ${
-                        active ? 'bg-white/[0.06] text-white' : 'text-plum-200 hover:bg-white/[0.04]'
-                      }`}
-                    >
-                      {link.label}
-                      <svg viewBox="0 0 24 24" className="h-4 w-4 text-plum-500" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                        <path d="m9 18 6-6-6-6" />
-                      </svg>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div
+        id="mobile-menu"
+        inert={!open}
+        className={`grid overflow-hidden bg-canvas/95 backdrop-blur-xl transition-[grid-template-rows,opacity] duration-300 ease-soft md:hidden ${
+          open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+        }`}
+      >
+        <ul className="min-h-0 overflow-hidden px-4">
+          {LINKS.map((link, i) => {
+            const active = isActive(link.href);
+            return (
+              <li key={link.href} className={i === 0 ? 'mt-3' : ''}>
+                <Link
+                  href={link.href}
+                  aria-current={active ? 'page' : undefined}
+                  className={`mb-1 flex items-center justify-between rounded-xl px-3 py-3 font-body text-[0.95rem] transition-colors ${
+                    active ? 'bg-white/[0.06] text-white' : 'text-plum-200 hover:bg-white/[0.04]'
+                  }`}
+                >
+                  {link.label}
+                  <svg viewBox="0 0 24 24" className="h-4 w-4 text-plum-500" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </header>
   );
 }
