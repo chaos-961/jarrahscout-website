@@ -12,8 +12,11 @@ const COAST_MS = 105;
 const MAX_COAST_RATIO = 0.22;
 
 const pctForYear = (year: number) => (year - TIMELINE_START) / SPAN;
-const yearForPct = (pct: number) =>
-  Math.round(Math.min(1, Math.max(0, pct)) * SPAN) + TIMELINE_START;
+const yearForPct = (pct: number) => {
+  // A non-finite pct would sail through clamping and poison the year forever.
+  if (!Number.isFinite(pct)) return TIMELINE_START;
+  return Math.round(Math.min(1, Math.max(0, pct)) * SPAN) + TIMELINE_START;
+};
 
 interface TimelineSliderProps {
   year: number;
@@ -89,7 +92,9 @@ export default function TimelineSlider({
         e.currentTarget.releasePointerCapture?.(e.pointerId);
       } catch {}
 
-      const width = trackRef.current?.getBoundingClientRect().width ?? 1;
+      // `||` not `??`: a zero width is the case that matters here, and
+      // dividing the coast distance by it is what produced NaN years.
+      const width = trackRef.current?.getBoundingClientRect().width || 1;
       const pts = samples.current;
       let coastPx = 0;
 
