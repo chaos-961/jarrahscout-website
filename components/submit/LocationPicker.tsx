@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import maplibregl, { type Map as MapLibreMap, type Marker } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { applyHeritageStyle, BASEMAP_STYLE_URL, MAP_ATTRIBUTION } from '@/lib/map-style';
+import { applyHeritageStyle, BASEMAP_STYLE_URL } from '@/lib/map-style';
 
 interface LocationPickerProps {
   value: { lat: number; lng: number } | null;
@@ -37,10 +37,7 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
     });
 
     map.touchZoomRotate.disableRotation();
-    map.addControl(
-      new maplibregl.AttributionControl({ compact: true, customAttribution: MAP_ATTRIBUTION }),
-      'bottom-right',
-    );
+    map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
 
     let initialised = false;
@@ -84,9 +81,9 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
       const el = document.createElement('div');
       el.innerHTML = `
         <svg viewBox="0 0 40 50" width="34" height="42" aria-hidden="true">
-          <path d="M20 46 13.2 30h13.6L20 46Z" fill="#1B4332"/>
-          <circle cx="20" cy="19" r="15.4" fill="#1B4332" stroke="#C9A227" stroke-width="1.5"/>
-          <circle cx="20" cy="19" r="4.6" fill="#FAF6EE"/>
+          <path d="M20 46 13.2 30h13.6L20 46Z" fill="#6537A8"/>
+          <circle cx="20" cy="19" r="15.4" fill="#6537A8" stroke="#D9C6F4" stroke-width="1.5"/>
+          <circle cx="20" cy="19" r="4.6" fill="#F7F3FD"/>
         </svg>`;
       el.style.cursor = 'grab';
       markerRef.current = new maplibregl.Marker({ element: el, anchor: 'bottom', draggable: true })
@@ -103,15 +100,15 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
 
   return (
     <div>
-      <div className="relative h-60 overflow-hidden rounded-xl border border-paper-300">
+      <div className="relative h-60 overflow-hidden rounded-xl border border-hairline">
         <div ref={containerRef} className="h-full w-full" />
         {!ready && (
-          <div className="absolute inset-0 overflow-hidden bg-paper-200">
-            <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-paper-50/60 to-transparent" />
+          <div className="absolute inset-0 overflow-hidden bg-plum-900">
+            <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-plum-700/40 to-transparent" />
           </div>
         )}
       </div>
-      <p className="mt-2 font-body text-xs text-ink-faint">
+      <p className="mt-2 font-body text-xs text-plum-500">
         {value
           ? `Pin at ${value.lat.toFixed(4)}, ${value.lng.toFixed(4)}. Drag it to adjust.`
           : 'Click the map to drop a pin where this happened.'}

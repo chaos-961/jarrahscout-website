@@ -1,729 +1,189 @@
-import type { ScoutEvent } from './types';
+import { CURATED_EVENTS } from './curated-events';
+import { ALL_YEARS } from './eras';
+import { photoSeed } from './images';
+import type { EventCategory, ScoutEvent } from './types';
 
 /**
- * Placeholder corpus standing in for the Firestore `events` collection.
+ * The placeholder corpus.
  *
- * Coordinates are real Lebanese places, weighted toward Mount Lebanon where the
- * group has always been based, with a handful further out. Photos are seeded
- * picsum URLs so a given event always renders the same image. Nothing here is a
- * real record: titles, people and descriptions are invented placeholders.
+ * Hand-written anchors from curated-events.ts, plus a generated set that fills
+ * the rest of the timeline so most years hold several records. Generation is
+ * seeded, so the same build always produces the same events. That matters:
+ * static export prerenders this, and a random corpus would mismatch on hydrate.
  */
 
-const photo = (seed: string) => `https://picsum.photos/seed/${seed}/1200/800`;
-
-export const MOCK_EVENTS: ScoutEvent[] = [
-  /* ---------------------------------------------- Founding Years, 1937-1949 */
-  {
-    id: 'js-1937-first-promise',
-    title: 'The First Promise',
-    date: '1937-05-16',
-    year: 1937,
-    lat: 33.8692,
-    lng: 35.5121,
-    locationName: 'Pine Forest, Beirut',
-    category: 'promise',
-    description:
-      'Nine boys stood in a half circle under the umbrella pines and made the scout promise for the first time. The troop had no uniforms yet, only neckerchiefs cut from a bolt of green cotton. A single photograph survives, badly faded.',
-    photoUrl: photo('js-1937-first-promise'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1938-bhamdoun-camp',
-    title: 'First Summer Camp at Bhamdoun',
-    date: '1938-07-09',
-    year: 1938,
-    lat: 33.7971,
-    lng: 35.6584,
-    locationName: 'Bhamdoun, Mount Lebanon',
-    category: 'camp',
-    description:
-      'Eleven days under canvas on a terraced slope lent by a local family. The troop cooked over wood fires and hauled water up from the village spring twice a day. It set the pattern for every summer camp that followed.',
-    photoUrl: photo('js-1938-bhamdoun-camp'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1939-nahr-el-kalb',
-    title: 'Nahr el Kalb Pilgrimage Hike',
-    date: '1939-04-22',
-    year: 1939,
-    lat: 33.9553,
-    lng: 35.6073,
-    locationName: 'Nahr el Kalb',
-    category: 'hike',
-    description:
-      'A day march along the river gorge to read the carved stelae left by passing armies. The scoutmaster used the inscriptions as a history lesson on the walk back. Rain turned the last stretch to mud.',
-    photoUrl: photo('js-1939-nahr-el-kalb'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1941-service-corps',
-    title: 'Wartime Service Corps',
-    date: '1941-09-13',
-    year: 1941,
-    lat: 33.8938,
-    lng: 35.5018,
-    locationName: 'Beirut',
-    category: 'service',
-    description:
-      'Older scouts were organised into runner and stretcher teams during the campaign. Meetings moved to early mornings and the troop flag was stored away for the duration. Attendance records for these years are incomplete.',
-    photoUrl: photo('js-1941-service-corps'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1943-independence-parade',
-    title: 'Independence Day Parade',
-    date: '1943-11-22',
-    year: 1943,
-    lat: 33.8959,
-    lng: 35.5079,
-    locationName: 'Place des Martyrs, Beirut',
-    category: 'anniversary',
-    description:
-      'The troop marched with drums behind the new flag on the first day of independence. Photographs show the column four abreast, most of them in borrowed shirts. It is remembered as the loudest day in the history of the group.',
-    photoUrl: photo('js-1943-independence-parade'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1946-cedars-expedition',
-    title: 'Cedars of God Expedition',
-    date: '1946-08-03',
-    year: 1946,
-    lat: 34.2436,
-    lng: 36.0492,
-    locationName: 'Cedars of God, Bcharre',
-    category: 'hike',
-    description:
-      'Three days on foot and by lorry to reach the old grove, the first time the troop travelled outside Mount Lebanon together. Each scout was given a cedar seedling to carry home. Two of those trees are said to still stand.',
-    photoUrl: photo('js-1946-cedars-expedition'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1948-beiteddine-rally',
-    title: 'Beiteddine Rally',
-    date: '1948-06-19',
-    year: 1948,
-    lat: 33.6942,
-    lng: 35.5811,
-    locationName: 'Beiteddine Palace, Chouf',
-    category: 'jamboree',
-    description:
-      'Four troops from across the mountain met in the palace courtyards for two days of games, signalling contests and a shared evening fire. It was the first taste of scouting at scale for the group.',
-    photoUrl: photo('js-1948-beiteddine-rally'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-
-  /* ------------------------------------------------- Golden Era, 1950-1974 */
-  {
-    id: 'js-1951-sofar-jamboree',
-    title: 'National Jamboree, Sofar',
-    date: '1951-07-14',
-    year: 1951,
-    lat: 33.8161,
-    lng: 35.7063,
-    locationName: 'Sofar, Mount Lebanon',
-    category: 'jamboree',
-    description:
-      'Six hundred scouts camped on the plateau above the old hotel district for a week. The group ran the water point and won the pioneering trophy for a rope bridge thrown across a dry gully.',
-    photoUrl: photo('js-1951-sofar-jamboree'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1953-silver-fundraiser',
-    title: 'Silver Fleur-de-Lis Fundraiser',
-    date: '1953-05-30',
-    year: 1953,
-    lat: 33.8835,
-    lng: 35.6412,
-    locationName: 'Broummana',
-    category: 'fundraiser',
-    description:
-      'A garden fete with a tombola, a tug of war and a great deal of lemonade, held to buy the troop its first proper set of tents. The takings covered nine of the twelve tents needed.',
-    photoUrl: photo('js-1953-silver-fundraiser'),
-    submittedBy: 'Nadia Khoury',
-    approved: true,
-  },
-  {
-    id: 'js-1955-aley-promise',
-    title: 'Spring Promise at Aley',
-    date: '1955-04-02',
-    year: 1955,
-    lat: 33.8106,
-    lng: 35.5997,
-    locationName: 'Aley',
-    category: 'promise',
-    description:
-      'Fourteen new scouts invested in an orchard in full blossom. The ceremony was moved outdoors at the last minute when the hall flooded. Parents watched from the terrace wall.',
-    photoUrl: photo('js-1955-aley-promise'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1955-faraya-high-camp',
-    title: 'Faraya High Camp',
-    date: '1955-08-11',
-    year: 1955,
-    lat: 34.0062,
-    lng: 35.8281,
-    locationName: 'Faraya',
-    category: 'camp',
-    description:
-      'The first camp pitched above seventeen hundred metres, chosen for the cold nights and the star fields. A patrol logbook from this camp survives nearly complete, with sketches of the ridge line.',
-    photoUrl: photo('js-1955-faraya-high-camp'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1957-twentieth',
-    title: 'Twentieth Anniversary Gathering',
-    date: '1957-05-16',
-    year: 1957,
-    lat: 33.8692,
-    lng: 35.5121,
-    locationName: 'Pine Forest, Beirut',
-    category: 'anniversary',
-    description:
-      'The group returned to the founding ground twenty years to the day. Four of the original nine attended and were given carved cedar tokens. The promise was renewed by everyone present at once.',
-    photoUrl: photo('js-1957-twentieth'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1959-qadisha-trek',
-    title: 'Qadisha Valley Trek',
-    date: '1959-09-05',
-    year: 1959,
-    lat: 34.2441,
-    lng: 35.9503,
-    locationName: 'Qadisha Valley',
-    category: 'hike',
-    description:
-      'A four day traverse of the gorge, sleeping in two of the rock monasteries along the route. Rated by the scoutmaster as the hardest walking the troop had done to that point.',
-    photoUrl: photo('js-1959-qadisha-trek'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1962-jbeil-camp',
-    title: 'Jbeil Coastal Camp',
-    date: '1962-07-21',
-    year: 1962,
-    lat: 34.1232,
-    lng: 35.6512,
-    locationName: 'Jbeil (Byblos)',
-    category: 'camp',
-    description:
-      'Ten days beside the old harbour learning rope work, small boat handling and coastal navigation. The camp ended with a night swim to the breakwater and back.',
-    photoUrl: photo('js-1962-jbeil-camp'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1964-harissa-promise',
-    title: 'Promise Ceremony at Harissa',
-    date: '1964-04-18',
-    year: 1964,
-    lat: 33.9836,
-    lng: 35.6501,
-    locationName: 'Harissa',
-    category: 'promise',
-    description:
-      'Twenty two scouts invested on the terrace below the shrine, with the bay laid out behind them. The group photograph from this day hung in the scout hall for decades.',
-    photoUrl: photo('js-1964-harissa-promise'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1966-sea-scouts',
-    title: 'Sea Scouts Launch',
-    date: '1966-05-15',
-    year: 1966,
-    lat: 34.1198,
-    lng: 35.6448,
-    locationName: 'Amchit',
-    category: 'service',
-    description:
-      'A second section was formed around two donated wooden dinghies kept on the beach at Amchit. The boats were repainted every spring by the scouts themselves.',
-    photoUrl: photo('js-1966-sea-scouts'),
-    submittedBy: 'Rami Haddad',
-    approved: true,
-  },
-  {
-    id: 'js-1966-mount-lebanon-jamboree',
-    title: 'Mount Lebanon Jamboree',
-    date: '1966-08-27',
-    year: 1966,
-    lat: 33.9128,
-    lng: 35.7221,
-    locationName: 'Dhour El Choueir',
-    category: 'jamboree',
-    description:
-      'A regional gathering of eleven troops under the pines, with a night of storytelling that ran until the fires went out. The group hosted the signalling tower and ran messages between the camps.',
-    photoUrl: photo('js-1966-mount-lebanon-jamboree'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1968-tannourine-planting',
-    title: 'Tannourine Tree Planting',
-    date: '1968-10-12',
-    year: 1968,
-    lat: 34.2071,
-    lng: 35.8983,
-    locationName: 'Tannourine',
-    category: 'service',
-    description:
-      'Six hundred cedar and juniper seedlings planted across a burned hillside over a single weekend. The group returned to the same slope every few years to check on them.',
-    photoUrl: photo('js-1968-tannourine-planting'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1970-laqlouq-camp',
-    title: 'Laqlouq Summer Camp',
-    date: '1970-07-04',
-    year: 1970,
-    lat: 34.1283,
-    lng: 35.8452,
-    locationName: 'Laqlouq',
-    category: 'camp',
-    description:
-      'Two weeks on the high pasture with a full pioneering programme: a gateway, a raised kitchen and a watchtower, all built from lashed poles. Photographs show the tower standing well above the tent line.',
-    photoUrl: photo('js-1970-laqlouq-camp'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1972-thirty-fifth',
-    title: 'Thirty-Fifth Anniversary',
-    date: '1972-05-13',
-    year: 1972,
-    lat: 33.8537,
-    lng: 35.6073,
-    locationName: 'Beit Mery',
-    category: 'anniversary',
-    description:
-      'A dinner and lantern procession attended by three generations. The oldest guest had made his promise in 1937 and was asked to light the first lantern.',
-    photoUrl: photo('js-1972-thirty-fifth'),
-    submittedBy: 'Nadia Khoury',
-    approved: true,
-  },
-  {
-    id: 'js-1974-ehden-camp',
-    title: 'Ehden Highland Camp',
-    date: '1974-08-17',
-    year: 1974,
-    lat: 34.2932,
-    lng: 35.9661,
-    locationName: 'Ehden',
-    category: 'camp',
-    description:
-      'The last full summer camp before the war years. Sixty three scouts attended, the highest number the group had ever taken into the field at once.',
-    photoUrl: photo('js-1974-ehden-camp'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-
-  /* ----------------------------------------- Years of Resilience, 1975-1990 */
-  {
-    id: 'js-1976-winter-relief',
-    title: 'Winter Relief Drive',
-    date: '1976-12-04',
-    year: 1976,
-    lat: 33.9141,
-    lng: 35.5862,
-    locationName: 'Antelias',
-    category: 'service',
-    description:
-      'Blankets, paraffin and tinned food collected and distributed to displaced families over three weeks. Scouting activity had largely stopped, but the service roster kept the group together.',
-    photoUrl: photo('js-1976-winter-relief'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1978-promise-pines',
-    title: 'Promise Under the Pines',
-    date: '1978-06-24',
-    year: 1978,
-    lat: 33.8817,
-    lng: 35.6389,
-    locationName: 'Broummana',
-    category: 'promise',
-    description:
-      'A quiet investiture for seven scouts, held in the afternoon so everyone could travel home before dark. No drums and no parade, and by every account one of the most moving ceremonies on record.',
-    photoUrl: photo('js-1978-promise-pines'),
-    submittedBy: 'Georges Sfeir',
-    approved: true,
-  },
-  {
-    id: 'js-1981-barouk-camp',
-    title: 'Barouk Cedar Camp',
-    date: '1981-08-09',
-    year: 1981,
-    lat: 33.7024,
-    lng: 35.6902,
-    locationName: 'Barouk, Chouf',
-    category: 'camp',
-    description:
-      'A short camp of five days arranged at two weeks notice when a safe corridor opened. Twenty nine scouts made it up the mountain. The programme was mostly walking and cooking.',
-    photoUrl: photo('js-1981-barouk-camp'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1984-bikfaya-fundraiser',
-    title: 'Bikfaya Shelter Fundraiser',
-    date: '1984-03-17',
-    year: 1984,
-    lat: 33.9192,
-    lng: 35.6861,
-    locationName: 'Bikfaya',
-    category: 'fundraiser',
-    description:
-      'A concert and craft sale to fund a heated room where the younger sections could meet through the winter. The room was in use within two months.',
-    photoUrl: photo('js-1984-bikfaya-fundraiser'),
-    submittedBy: 'Nadia Khoury',
-    approved: true,
-  },
-  {
-    id: 'js-1987-fiftieth',
-    title: 'Fiftieth Anniversary',
-    date: '1987-05-16',
-    year: 1987,
-    lat: 33.8692,
-    lng: 35.5121,
-    locationName: 'Pine Forest, Beirut',
-    category: 'anniversary',
-    description:
-      'Fifty years to the day, and the group gathered again on the founding ground despite the conditions. Two of the original nine were still living, and one was able to attend.',
-    photoUrl: photo('js-1987-fiftieth'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1987-jubilee-camp',
-    title: 'Golden Jubilee Camp, Faqra',
-    date: '1987-07-25',
-    year: 1987,
-    lat: 33.9853,
-    lng: 35.7983,
-    locationName: 'Faqra',
-    category: 'camp',
-    description:
-      'A jubilee camp among the limestone formations, deliberately ambitious after years of small gatherings. Alumni came up for a single day and outnumbered the scouts.',
-    photoUrl: photo('js-1987-jubilee-camp'),
-    submittedBy: 'Georges Sfeir',
-    approved: true,
-  },
-  {
-    id: 'js-1987-jubilee-service',
-    title: 'Jubilee Service Day',
-    date: '1987-10-03',
-    year: 1987,
-    lat: 33.8677,
-    lng: 35.5783,
-    locationName: 'Mansourieh',
-    category: 'service',
-    description:
-      'The anniversary year closed with a day of work rather than ceremony: a clinic repainted, a schoolyard cleared and a well cover rebuilt. Fifty tasks were set to match the fifty years.',
-    photoUrl: photo('js-1987-jubilee-service'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1989-choueir-regroup',
-    title: 'Dhour El Choueir Regroup',
-    date: '1989-09-16',
-    year: 1989,
-    lat: 33.9134,
-    lng: 35.7218,
-    locationName: 'Dhour El Choueir',
-    category: 'jamboree',
-    description:
-      'Troops that had been cut off from one another for years met for a single weekend to compare what was left of their programmes. The group brought its tents and lent half of them out.',
-    photoUrl: photo('js-1989-choueir-regroup'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-
-  /* ------------------------------------------------- Rebuilding, 1991-2009 */
-  {
-    id: 'js-1992-return-to-sofar',
-    title: 'Return to Sofar',
-    date: '1992-07-11',
-    year: 1992,
-    lat: 33.8158,
-    lng: 35.7071,
-    locationName: 'Sofar',
-    category: 'camp',
-    description:
-      'The first full length summer camp in eighteen years, pitched on the same plateau as the 1951 jamboree. The gateway was rebuilt from the original plans found in the archive.',
-    photoUrl: photo('js-1992-return-to-sofar'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1994-rebuilding-hands',
-    title: 'Rebuilding Hands Fundraiser',
-    date: '1994-04-09',
-    year: 1994,
-    lat: 33.9451,
-    lng: 35.5903,
-    locationName: 'Dbayeh',
-    category: 'fundraiser',
-    description:
-      'A sponsored walk along the coast road to replace equipment lost or worn out during the war years. It funded tents, a trek cart and a new set of patrol flags.',
-    photoUrl: photo('js-1994-rebuilding-hands'),
-    submittedBy: 'Rami Haddad',
-    approved: true,
-  },
-  {
-    id: 'js-1996-baskinta-camp',
-    title: 'Baskinta Star Camp',
-    date: '1996-08-22',
-    year: 1996,
-    lat: 33.9301,
-    lng: 35.7822,
-    locationName: 'Baskinta',
-    category: 'camp',
-    description:
-      'A camp built around night observation, with a borrowed telescope and a visiting astronomer from the university. Lights out was moved to two in the morning for the week.',
-    photoUrl: photo('js-1996-baskinta-camp'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-1998-deir-el-qamar-promise',
-    title: 'Promise at Deir el Qamar',
-    date: '1998-06-13',
-    year: 1998,
-    lat: 33.6989,
-    lng: 35.5641,
-    locationName: 'Deir el Qamar',
-    category: 'promise',
-    description:
-      'Thirty one scouts invested in the old square, the largest single investiture the group has held. The ceremony was followed by a procession through the village.',
-    photoUrl: photo('js-1998-deir-el-qamar-promise'),
-    submittedBy: 'Georges Sfeir',
-    approved: true,
-  },
-  {
-    id: 'js-2001-batroun-cleanup',
-    title: 'Batroun Coastal Clean-up',
-    date: '2001-09-08',
-    year: 2001,
-    lat: 34.2553,
-    lng: 35.6581,
-    locationName: 'Batroun',
-    category: 'service',
-    description:
-      'Four kilometres of shoreline cleared over a weekend, with everything sorted and weighed for a report to the municipality. It became an annual fixture for the next decade.',
-    photoUrl: photo('js-2001-batroun-cleanup'),
-    submittedBy: 'Rami Haddad',
-    approved: true,
-  },
-  {
-    id: 'js-2003-mzaar-hike',
-    title: 'Mzaar Summit Hike',
-    date: '2003-07-19',
-    year: 2003,
-    lat: 34.0171,
-    lng: 35.8373,
-    locationName: 'Mzaar Kfardebian',
-    category: 'hike',
-    description:
-      'A dawn start from the village to reach the summit before the heat. On a clear morning the whole coastal plain was visible from the top, and the sea beyond it.',
-    photoUrl: photo('js-2003-mzaar-hike'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-2005-jezzine-jamboree',
-    title: 'Jezzine Regional Jamboree',
-    date: '2005-05-14',
-    year: 2005,
-    lat: 33.5452,
-    lng: 35.5851,
-    locationName: 'Jezzine',
-    category: 'jamboree',
-    description:
-      'Nine troops camped above the waterfall for three days of contests and a shared closing fire. The group took the pioneering trophy for the second time in its history.',
-    photoUrl: photo('js-2005-jezzine-jamboree'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-2007-seventieth',
-    title: 'Seventieth Anniversary Camp',
-    date: '2007-08-04',
-    year: 2007,
-    lat: 33.7968,
-    lng: 35.6591,
-    locationName: 'Bhamdoun',
-    category: 'anniversary',
-    description:
-      'Seventy years on, the group camped again on the Bhamdoun terraces where the first summer camp was held. Descendants of the family who lent the land in 1938 were guests of honour.',
-    photoUrl: photo('js-2007-seventieth'),
-    submittedBy: 'Nadia Khoury',
-    approved: true,
-  },
-
-  /* --------------------------------------------- New Generation, 2010-2026 */
-  {
-    id: 'js-2011-hammana-camp',
-    title: 'Hammana Forest Camp',
-    date: '2011-07-16',
-    year: 2011,
-    lat: 33.8261,
-    lng: 35.7323,
-    locationName: 'Hammana',
-    category: 'camp',
-    description:
-      'A ten day camp in the pine forest with the first fully mixed patrol structure in the history of the group. The programme was written by the scouts themselves over the preceding spring.',
-    photoUrl: photo('js-2011-hammana-camp'),
-    submittedBy: 'Lara Abou Jaoude',
-    approved: true,
-  },
-  {
-    id: 'js-2011-marathon-marshals',
-    title: 'Beirut Marathon Marshals',
-    date: '2011-11-05',
-    year: 2011,
-    lat: 33.9008,
-    lng: 35.5192,
-    locationName: 'Beirut Corniche',
-    category: 'service',
-    description:
-      'Forty scouts staffed water stations and junction marshalling along the coastal stretch of the course. The group has been asked back every year since.',
-    photoUrl: photo('js-2011-marathon-marshals'),
-    submittedBy: 'Lara Abou Jaoude',
-    approved: true,
-  },
-  {
-    id: 'js-2013-tripoli-twinning',
-    title: 'Tripoli Twinning Visit',
-    date: '2013-10-19',
-    year: 2013,
-    lat: 34.4361,
-    lng: 35.8497,
-    locationName: 'Tripoli',
-    category: 'jamboree',
-    description:
-      'A weekend exchange with a northern troop, hosted in their hall and returned the following spring. The two groups have run a joint camp most years since.',
-    photoUrl: photo('js-2013-tripoli-twinning'),
-    submittedBy: 'Rami Haddad',
-    approved: true,
-  },
-  {
-    id: 'js-2016-beit-mery-promise',
-    title: 'Promise Ceremony, Beit Mery',
-    date: '2016-06-11',
-    year: 2016,
-    lat: 33.8541,
-    lng: 35.6068,
-    locationName: 'Beit Mery',
-    category: 'promise',
-    description:
-      'Eighteen new scouts invested at sunset on the ridge, with the city lights coming on below them. The neckerchiefs were cut from the same pattern used in 1937.',
-    photoUrl: photo('js-2016-beit-mery-promise'),
-    submittedBy: 'Lara Abou Jaoude',
-    approved: true,
-  },
-  {
-    id: 'js-2018-antelias-food-drive',
-    title: 'Antelias Food Drive',
-    date: '2018-04-14',
-    year: 2018,
-    lat: 33.9138,
-    lng: 35.5871,
-    locationName: 'Antelias',
-    category: 'service',
-    description:
-      'A month long collection run out of the scout hall, sorting and packing parcels for local families. Over four hundred parcels went out in the final week.',
-    photoUrl: photo('js-2018-antelias-food-drive'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
-  {
-    id: 'js-2018-chouf-trek',
-    title: 'Chouf Biosphere Trek',
-    date: '2018-08-25',
-    year: 2018,
-    lat: 33.6603,
-    lng: 35.6871,
-    locationName: 'Maasser el Chouf',
-    category: 'hike',
-    description:
-      'A three day traverse of the cedar reserve with a ranger walking the first day alongside the troop. Scouts logged every species they could identify along the route.',
-    photoUrl: photo('js-2018-chouf-trek'),
-    submittedBy: 'Lara Abou Jaoude',
-    approved: true,
-  },
-  {
-    id: 'js-2020-support-drive',
-    title: 'Emergency Support Drive',
-    date: '2020-11-07',
-    year: 2020,
-    lat: 33.9004,
-    lng: 35.5323,
-    locationName: 'Mar Mikhael, Beirut',
-    category: 'service',
-    description:
-      'With meetings suspended, the group organised deliveries of medicine and supplies across the eastern districts. Coordination ran entirely over phones from six different houses.',
-    photoUrl: photo('js-2020-support-drive'),
-    submittedBy: 'Lara Abou Jaoude',
-    approved: true,
-  },
-  {
-    id: 'js-2022-eighty-fifth',
-    title: 'Eighty-Fifth Anniversary',
-    date: '2022-05-21',
-    year: 2022,
-    lat: 33.8692,
-    lng: 35.5121,
-    locationName: 'Pine Forest, Beirut',
-    category: 'anniversary',
-    description:
-      'A gathering of current scouts and alumni on the founding ground, with the archive displayed in the open air. Visitors were invited to name faces in the unlabelled photographs.',
-    photoUrl: photo('js-2022-eighty-fifth'),
-    submittedBy: 'Nadia Khoury',
-    approved: true,
-  },
-  {
-    id: 'js-2024-faqra-rock-camp',
-    title: 'Faqra Rock Camp',
-    date: '2024-07-13',
-    year: 2024,
-    lat: 33.9861,
-    lng: 35.7994,
-    locationName: 'Faqra',
-    category: 'camp',
-    description:
-      'A camp built around climbing and scrambling on the limestone, run with two qualified instructors. Every scout led a pitch by the end of the week.',
-    photoUrl: photo('js-2024-faqra-rock-camp'),
-    submittedBy: 'Lara Abou Jaoude',
-    approved: true,
-  },
-  {
-    id: 'js-2026-founders-walk',
-    title: 'The Founders Walk',
-    date: '2026-05-16',
-    year: 2026,
-    lat: 33.8692,
-    lng: 35.5121,
-    locationName: 'Pine Forest to Bhamdoun',
-    category: 'anniversary',
-    description:
-      'Marking the eve of ninety years, the group walked from the founding ground toward the site of the first summer camp. The route was reconstructed from the 1938 camp diary.',
-    photoUrl: photo('js-2026-founders-walk'),
-    submittedBy: 'Group Archive',
-    approved: true,
-  },
+/* Real places, weighted toward Mount Lebanon where the group is based. */
+const PLACES: [string, number, number][] = [
+  ['Beirut', 33.8938, 35.5018],
+  ['Zarif, Beirut', 33.8817, 35.4881],
+  ['Pine Forest, Beirut', 33.8692, 35.5121],
+  ['Beirut Corniche', 33.9008, 35.5192],
+  ['Ras Beirut', 33.897, 35.4802],
+  ['Baabda', 33.8339, 35.5442],
+  ['Aley', 33.8106, 35.5997],
+  ['Bhamdoun', 33.7971, 35.6584],
+  ['Sofar', 33.8161, 35.7063],
+  ['Hammana', 33.8261, 35.7323],
+  ['Falougha', 33.8461, 35.7561],
+  ['Ras el Metn', 33.8452, 35.6883],
+  ['Broummana', 33.8835, 35.6412],
+  ['Beit Mery', 33.8541, 35.6068],
+  ['Mansourieh', 33.8677, 35.5783],
+  ['Antelias', 33.9138, 35.5871],
+  ['Dbayeh', 33.9451, 35.5903],
+  ['Bikfaya', 33.9192, 35.6861],
+  ['Dhour El Choueir', 33.9134, 35.7218],
+  ['Baskinta', 33.9301, 35.7822],
+  ['Zaarour', 33.9002, 35.7801],
+  ['Jounieh', 33.9808, 35.6178],
+  ['Harissa', 33.9836, 35.6501],
+  ['Nahr el Kalb', 33.9553, 35.6073],
+  ['Faraya', 34.0062, 35.8281],
+  ['Faqra', 33.9853, 35.7983],
+  ['Kfardebian', 34.0002, 35.7752],
+  ['Mzaar Kfardebian', 34.0171, 35.8373],
+  ['Jbeil (Byblos)', 34.1232, 35.6512],
+  ['Amchit', 34.1198, 35.6448],
+  ['Laqlouq', 34.1283, 35.8452],
+  ['Tannourine', 34.2071, 35.8983],
+  ['Batroun', 34.2553, 35.6581],
+  ['Ehden', 34.2932, 35.9661],
+  ['Bcharre', 34.2512, 36.0102],
+  ['Cedars of God, Bcharre', 34.2436, 36.0492],
+  ['Qadisha Valley', 34.2441, 35.9503],
+  ['Tripoli', 34.4361, 35.8497],
+  ['Deir el Qamar', 33.6989, 35.5641],
+  ['Beiteddine, Chouf', 33.6942, 35.5811],
+  ['Barouk, Chouf', 33.7024, 35.6902],
+  ['Maasser el Chouf', 33.6603, 35.6871],
+  ['Jezzine', 33.5452, 35.5851],
+  ['Saida', 33.5606, 35.3752],
+  ['Zahle', 33.8463, 35.9021],
+  ['Anjar', 33.7292, 35.9302],
 ];
+
+const TITLES: Record<EventCategory, string[]> = {
+  camp: ['Summer Camp at {p}', 'Winter Camp, {p}', 'Patrol Camp at {p}', 'Troop Camp, {p}', 'Pioneer Camp at {p}'],
+  jamboree: ['Regional Jamboree, {p}', 'District Gathering at {p}', 'Troop Rally, {p}', 'Joint Camp at {p}'],
+  promise: ['Promise Ceremony at {p}', 'Investiture, {p}', 'New Scouts Invested at {p}', 'Spring Promise, {p}'],
+  hike: ['Day Hike to {p}', 'Ridge Walk, {p}', 'Overnight Trek to {p}', 'Valley Traverse, {p}'],
+  anniversary: ['Anniversary Gathering, {p}', 'Founders Day at {p}', 'Commemoration, {p}'],
+  fundraiser: ['Fundraising Fete, {p}', 'Sponsored Walk from {p}', 'Craft Sale at {p}', 'Benefit Evening, {p}'],
+  service: ['Service Day at {p}', 'Clean-up at {p}', 'Tree Planting, {p}', 'Relief Drive, {p}', 'Community Works, {p}'],
+};
+
+const OPENERS = [
+  'A full weekend of work and games',
+  'Two days on the ground',
+  'A short outing arranged at little notice',
+  'One of the busier turnouts of the year',
+  'A quiet gathering with a small turnout',
+  'The section met early and stayed late',
+  'A long day that ran past dusk',
+  'Planned over the spring and run in a single weekend',
+];
+
+const MIDDLES = [
+  'with the patrols split across three tasks.',
+  'built around pioneering and knot work.',
+  'with cooking done entirely over open fires.',
+  'that drew families up for the closing afternoon.',
+  'with the younger section joining for the first time.',
+  'run to the programme the scouts wrote themselves.',
+  'with a map and compass exercise across the valley.',
+  'and a night of songs around the fire to close it.',
+];
+
+const CLOSERS = [
+  'Records from the day are thin but the photographs survive.',
+  'It became a fixture for several years afterwards.',
+  'The logbook entry runs to four pages.',
+  'Attendance was the highest the section had managed that year.',
+  'Weather cut the last afternoon short.',
+  'Several of those present went on to lead the troop.',
+  'It is remembered mostly for the food.',
+  'The gateway built that weekend stood until the following spring.',
+];
+
+const NAMES = [
+  'Group Archive',
+  'Rami Haddad',
+  'Nadia Khoury',
+  'Georges Sfeir',
+  'Lara Abou Jaoude',
+  'Samir Nassar',
+  'Maya Chalhoub',
+  'Karim Rizk',
+];
+
+/* mulberry32: small, fast, and stable across runs. */
+function rng(seed: number) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** How busy a year was, by era. Wartime years are deliberately sparse. */
+function yearWeight(year: number): [number, number] {
+  if (year <= 1949) return [0, 2];
+  if (year <= 1974) return [1, 3];
+  if (year <= 1990) return [0, 2];
+  if (year <= 2009) return [1, 3];
+  return [2, 4];
+}
+
+const CATEGORIES: EventCategory[] = [
+  'camp', 'camp', 'hike', 'hike', 'promise', 'service', 'service', 'jamboree', 'fundraiser', 'anniversary',
+];
+
+function generate(): ScoutEvent[] {
+  const out: ScoutEvent[] = [];
+  const rand = rng(0x5ca7);
+
+  for (const year of ALL_YEARS) {
+    const [lo, hi] = yearWeight(year);
+    let count = lo + Math.floor(rand() * (hi - lo + 1));
+
+    // Leave roughly one year in seven blank, so the empty state stays real.
+    if (rand() < 0.14) count = 0;
+
+    for (let i = 0; i < count; i++) {
+      const place = PLACES[Math.floor(rand() * PLACES.length)];
+      const category = CATEGORIES[Math.floor(rand() * CATEGORIES.length)];
+      const pattern = TITLES[category][Math.floor(rand() * TITLES[category].length)];
+      const month = 1 + Math.floor(rand() * 12);
+      const day = 1 + Math.floor(rand() * 28);
+      const id = `js-g-${year}-${i}`;
+
+      out.push({
+        id,
+        title: pattern.replace('{p}', place[0]),
+        date: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+        year,
+        // Jitter so repeat visits to one place do not stack into a single pixel.
+        lat: place[1] + (rand() - 0.5) * 0.035,
+        lng: place[2] + (rand() - 0.5) * 0.035,
+        locationName: place[0],
+        category,
+        description: [
+          OPENERS[Math.floor(rand() * OPENERS.length)],
+          MIDDLES[Math.floor(rand() * MIDDLES.length)],
+          CLOSERS[Math.floor(rand() * CLOSERS.length)],
+        ].join(' '),
+        photoUrl: photoSeed(id),
+        submittedBy: NAMES[Math.floor(rand() * NAMES.length)],
+        approved: true,
+      });
+    }
+  }
+
+  return out;
+}
+
+export const MOCK_EVENTS: ScoutEvent[] = [...CURATED_EVENTS, ...generate()].sort((a, b) =>
+  a.date.localeCompare(b.date),
+);

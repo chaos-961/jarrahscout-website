@@ -17,35 +17,37 @@ const inter = Inter({
 
 const SITE = 'https://chaos-961.github.io/jarrahscout-website';
 
+const DESCRIPTION =
+  'Ninety years of Jarrah Scouts, plotted year by year across Lebanon. Drag the timeline to watch camps, jamborees and promises appear on the map.';
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
     default: 'Jarrah Scouts | Heritage Archive',
     template: '%s | Jarrah Scouts',
   },
-  description:
-    'Ninety years of scouting in Lebanon, plotted year by year. Drag the timeline to watch camps, jamborees and promises appear across Mount Lebanon.',
-  keywords: ['scouts', 'Lebanon', 'Mount Lebanon', 'heritage', 'archive', 'timeline', 'history'],
+  description: DESCRIPTION,
+  applicationName: 'Jarrah Scouts Heritage Archive',
+  keywords: ['Jarrah Scouts', 'كشافة الجراح', 'Lebanon', 'scouts', 'heritage', 'archive', 'timeline'],
   openGraph: {
     type: 'website',
     siteName: 'Jarrah Scouts',
     title: 'Jarrah Scouts | Heritage Archive',
-    description:
-      'Ninety years of scouting in Lebanon, plotted year by year on an interactive timeline map.',
+    description: DESCRIPTION,
     url: SITE,
     locale: 'en_GB',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Jarrah Scouts | Heritage Archive',
-    description:
-      'Ninety years of scouting in Lebanon, plotted year by year on an interactive timeline map.',
+    description: DESCRIPTION,
   },
   robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {
-  themeColor: '#FAF6EE',
+  themeColor: '#150920',
+  colorScheme: 'dark',
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
@@ -54,7 +56,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
-      <body className="min-h-[100dvh] bg-paper">
+      <body className="min-h-[100dvh] bg-canvas">
         <Navbar />
         {children}
       </body>
