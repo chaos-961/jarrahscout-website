@@ -56,11 +56,17 @@ const config: Config = {
           '0%': { transform: 'translate3d(0,-50%,0)' },
           '100%': { transform: 'translate3d(0,0,0)' },
         },
+        /* The hero's scroll cue. */
+        bob: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(5px)' },
+        },
       },
       animation: {
         shimmer: 'shimmer 1.8s infinite',
         'drift-up': 'driftUp linear infinite',
         'drift-down': 'driftDown linear infinite',
+        bob: 'bob 2.4s ease-in-out infinite',
       },
     },
   },

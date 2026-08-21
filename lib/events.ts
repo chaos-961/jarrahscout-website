@@ -1,3 +1,4 @@
+import { CURATED_EVENTS } from './curated-events';
 import { MOCK_EVENTS } from './mock-events';
 import { ALL_YEARS } from './eras';
 import type { EventDraft, ScoutEvent } from './types';
@@ -42,6 +43,33 @@ function published(): ScoutEvent[] {
 export async function getEvents(): Promise<ScoutEvent[]> {
   const rows = published().slice().sort((a, b) => a.date.localeCompare(b.date));
   return settle(rows);
+}
+
+/**
+ * A short run of records for the home page, spread across the whole timeline.
+ *
+ * The mock layer picks from the hand-written anchors, which are the records
+ * that carry real descriptions. Firestore:
+ *   const q = query(
+ *     collection(db, 'events'),
+ *     where('approved', '==', true),
+ *     where('featured', '==', true),
+ *     orderBy('date', 'asc'),
+ *     limit(count),
+ *   );
+ */
+export async function getFeaturedEvents(count = 3): Promise<ScoutEvent[]> {
+  const anchors = CURATED_EVENTS.filter((e) => e.approved)
+    .slice()
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  if (count < 1) return settle([]);
+  if (anchors.length <= count) return settle(anchors);
+  if (count === 1) return settle([anchors[0]]);
+
+  // Evenly spaced, so the picks reach from the first record to the last.
+  const step = (anchors.length - 1) / (count - 1);
+  return settle(Array.from({ length: count }, (_, i) => anchors[Math.round(i * step)]));
 }
 
 /**

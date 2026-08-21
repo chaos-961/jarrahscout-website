@@ -21,6 +21,7 @@ const SWAP_MS = 2800;
 function Tile({ url }: { url: string }) {
   const [shown, setShown] = useState(url);
   const [visible, setVisible] = useState(true);
+  const [loaded, setLoaded] = useState(false);
 
   /* Fade out, swap the source behind the fade, fade back in. */
   useEffect(() => {
@@ -34,15 +35,20 @@ function Tile({ url }: { url: string }) {
   }, [url, shown]);
 
   return (
-    <div className="relative aspect-[3/4] w-full shrink-0 overflow-hidden rounded-xl bg-plum-900">
+    <div className="relative aspect-[3/4] w-full shrink-0 overflow-hidden rounded-xl bg-plum-900 ring-1 ring-white/[0.07]">
+      {/* Something to look at while the photograph arrives. */}
+      {!loaded && (
+        <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-plum-800/50 to-transparent" />
+      )}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={shown}
         alt=""
         loading="lazy"
         decoding="async"
-        className={`h-full w-full object-cover transition-opacity duration-300 ${
-          visible ? 'opacity-100' : 'opacity-0'
+        onLoad={() => setLoaded(true)}
+        className={`h-full w-full object-cover transition-opacity duration-500 ${
+          visible && loaded ? 'opacity-100' : 'opacity-0'
         }`}
       />
     </div>
@@ -77,7 +83,7 @@ export default function PhotoWall({ pool }: { pool: string[] }) {
   }, [urls]);
 
   return (
-    <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+    <div className="absolute inset-0 isolate overflow-hidden" aria-hidden="true">
       <div className="grid h-full grid-cols-3 gap-2.5 p-2.5 sm:grid-cols-4 lg:grid-cols-5">
         {columns.map((col, i) => (
           <div
@@ -93,6 +99,16 @@ export default function PhotoWall({ pool }: { pool: string[] }) {
           </div>
         ))}
       </div>
+
+      {/* Vignette. The wall reaches the edge of the section, and without this it
+          ends on a hard line against the canvas. */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(125% 95% at 55% 45%, transparent 45%, rgba(21,9,32,0.4) 80%, rgba(21,9,32,0.85) 100%)',
+        }}
+      />
     </div>
   );
 }

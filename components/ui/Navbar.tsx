@@ -48,7 +48,7 @@ export default function Navbar() {
     <header
       className={`fixed inset-x-0 top-0 z-[60] transition-colors duration-300 ${
         scrolled || open
-          ? 'border-b border-hairline bg-canvas/85 backdrop-blur-xl'
+          ? 'border-b border-hairline bg-canvas/92 backdrop-blur-xl'
           : 'border-b border-transparent bg-canvas/30 backdrop-blur-md'
       }`}
     >

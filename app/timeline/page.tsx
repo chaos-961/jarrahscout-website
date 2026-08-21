@@ -8,7 +8,7 @@ import TimelineSlider from '@/components/timeline/TimelineSlider';
 import EventPanel from '@/components/panel/EventPanel';
 import EmptyYearState from '@/components/ui/EmptyYearState';
 import { getEvents, getYearDensity } from '@/lib/events';
-import { TIMELINE_START } from '@/lib/eras';
+import { TIMELINE_END, TIMELINE_START } from '@/lib/eras';
 import type { ScoutEvent } from '@/lib/types';
 
 /* WebGL has no business running on the server. */
@@ -31,6 +31,18 @@ export default function TimelinePage() {
   const [allEvents, setAllEvents] = useState<ScoutEvent[] | null>(null);
   const [density, setDensity] = useState<Record<number, number>>({});
   const [selected, setSelected] = useState<ScoutEvent | null>(null);
+
+  /* Links in from the home page carry the year they want, as ?year=1965.
+     Read from the URL rather than useSearchParams: a static export has no
+     request to read, so the param only exists in the browser. */
+  useEffect(() => {
+    const raw = new URLSearchParams(window.location.search).get('year');
+    if (!raw) return;
+    const wanted = Number(raw);
+    if (!Number.isInteger(wanted)) return;
+    if (wanted < TIMELINE_START || wanted > TIMELINE_END) return;
+    setYear(wanted);
+  }, []);
 
   /* Two reads on mount, then every year change is local. Same shape a small
      Firestore collection would use: fetch once, filter client side. */

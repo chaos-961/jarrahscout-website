@@ -23,8 +23,8 @@ npm run build   # static export into out/
 
 | Path | What it is |
 | --- | --- |
-| `/` and `/home` | Landing page: drifting photo wall, stats, eras |
-| `/timeline` | The timeline map |
+| `/` and `/home` | Landing page: drifting photo wall, stats, featured records, eras |
+| `/timeline` | The timeline map. `?year=1965` opens on that year |
 | `/submit` | Event submission with a map location picker |
 | `/about` | About the archive |
 
